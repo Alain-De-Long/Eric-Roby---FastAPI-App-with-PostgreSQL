@@ -1,6 +1,13 @@
-def main():
-    print("Hello from eric-roby-fastapi-app-with-postgresql!")
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel, Field
+from typing import List, Annotated
 
+app=FastAPI()
 
-if __name__ == "__main__":
-    main()
+class ChoiceBase(BaseModel):
+    choice_text: str
+    is_correct: bool
+    
+class QuestionBase(BaseModel):
+    question_text: str
+    choices: List[ChoiceBase]
