@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 
 from core.config import settings
 
@@ -10,17 +10,19 @@ engine = create_engine(settings.DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 
 def get_db():
     db = SessionLocal()
 
     try:
-        print("SUCCESS")
         yield db
     except Exception as e:
-        print(e)
+        print(f"Database error encountered: {e}")
+        raise (e)
     finally:
         db.close()
 

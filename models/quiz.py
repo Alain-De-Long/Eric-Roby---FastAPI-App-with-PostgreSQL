@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Boolean, Integer, String
 from database.session import Base
 
 
-class Quesions(Base):
+class Questions(Base):
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, index=True)
