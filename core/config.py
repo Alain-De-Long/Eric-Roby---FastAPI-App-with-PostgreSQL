@@ -1,0 +1,24 @@
+from typing import List
+from pydantic_settings import BaseSettings
+from pydantic import computed_field
+
+
+class Settings(BaseSettings):
+    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_PORT: int = 5432
+    POSTGRES_DB: str = "postgres"
+    POSTGRES_USER: str = "admin"
+    POSTGRES_PASSWORD: str = "admin"
+
+    @computed_field
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
+
+
+settings = Settings()
