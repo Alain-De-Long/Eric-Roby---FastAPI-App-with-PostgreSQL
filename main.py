@@ -22,12 +22,20 @@ def read_question(question_id: int, db: db_dependency):
     return result
 
 
+@app.get("/choices/{question_id}")
+def read_choices(question_id: int, db: db_dependency):
+    result = db.query(Choices).filter(Choices.question_id == question_id).all()
+    if not result:
+        raise HTTPException(status_code=404, detail="Choices is not found")
+
+    return result
+
+
 @app.post("/questions")
-async def create_questions(question: QuestionBase, db: db_dependency):
+def create_questions(question: QuestionBase, db: db_dependency):
     db_question = Questions(question_text=question.question_text)
     db.add(db_question)
-    db.commit()
-    db.refresh(db_question)
+    db.flush()
 
     for choice in question.choices:
         db_choice = Choices(
@@ -35,10 +43,12 @@ async def create_questions(question: QuestionBase, db: db_dependency):
             is_correct=choice.is_correct,
             question_id=db_question.id,
         )
-
         db.add(db_choice)
-    db.commit()
 
+    db.commit()
+    db.refresh(db_question)
+    
+    return db_question
 
 # if __name__ == "__main__":
 # print(settings.POSTGRES_DB)
