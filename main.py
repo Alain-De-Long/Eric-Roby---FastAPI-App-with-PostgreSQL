@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from core.config import settings
 from database.session import create_all_tables, db_dependency
-from models.quiz import Quesions, Choices
+from models.quiz import Questions, Choices
 from schemas.quiz import QuestionBase, ChoiceBase
 
 create_all_tables()
@@ -13,9 +13,18 @@ create_all_tables()
 app = FastAPI()
 
 
+@app.get("/questions/{question_id}")
+def read_question(question_id: int, db: db_dependency):
+    result = db.query(Questions).filter(Questions.id == question_id).first()
+    if not result:
+        raise HTTPException(status_code=404, detail="Question is not found")
+
+    return result
+
+
 @app.post("/questions")
 async def create_questions(question: QuestionBase, db: db_dependency):
-    db_question = Quesions(question_text=question.question_text)
+    db_question = Questions(question_text=question.question_text)
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
@@ -32,7 +41,7 @@ async def create_questions(question: QuestionBase, db: db_dependency):
 
 
 # if __name__ == "__main__":
-    # print(settings.POSTGRES_DB)
-    # print(settings.POSTGRES_USER)
-    # print(settings.POSTGRES_PASSWORD)
-    # print(settings.DATABASE_URL)
+# print(settings.POSTGRES_DB)
+# print(settings.POSTGRES_USER)
+# print(settings.POSTGRES_PASSWORD)
+# print(settings.DATABASE_URL)
