@@ -1,5 +1,5 @@
 from typing import List
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field
 
 
@@ -15,10 +15,15 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    # class Config:
+    #     env_file = ".env"
+    #     env_file_encoding = "utf-8"
+    #     case_sensitive = True
+    #     extra = "ignore"
+
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf=8", case_sensitive=True, extra="ignore"
+    )
 
 
 settings = Settings()

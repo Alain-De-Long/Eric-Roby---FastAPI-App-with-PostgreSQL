@@ -13,7 +13,7 @@ app = FastAPI()
 def read_question(question_id: int, db: db_dependency):
     result = db.query(Questions).filter(Questions.id == question_id).first()
     if not result:
-        raise HTTPException(status_code=404, detail="Question is not found")
+        raise HTTPException(status_code=404, detail="Q is not found")
 
     return result
 
