@@ -1,9 +1,5 @@
-from typing import List, Annotated
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
+from fastapi import FastAPI, HTTPException
 
-from core.config import settings
 from database.session import create_all_tables, db_dependency
 from models.quiz import Questions, Choices
 from schemas.quiz import QuestionBase, ChoiceBase
@@ -47,8 +43,9 @@ def create_questions(question: QuestionBase, db: db_dependency):
 
     db.commit()
     db.refresh(db_question)
-    
+
     return db_question
+
 
 # if __name__ == "__main__":
 # print(settings.POSTGRES_DB)
