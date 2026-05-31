@@ -9,3 +9,6 @@ wheels/
 # Environments
 .venv
 .env
+
+# Deployment
+Test-Deploy/
