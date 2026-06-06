@@ -1,7 +1,7 @@
 [project]
 name = "eric-roby-fastapi-app-with-postgresql"
 version = "0.1.0"
-description = "Add your description here"
+description = "How to build a FastAPI app with PostgreSQL"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
