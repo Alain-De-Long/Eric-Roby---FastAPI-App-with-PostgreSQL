@@ -1,7 +1,8 @@
-from database.session import create_all_tables, db_dependency
 from fastapi import FastAPI, HTTPException
-from models.quiz import Choices, Questions
-from schemas.quiz import QuestionBase
+
+from src.database.session import create_all_tables, db_dependency
+from src.models.quiz import Choices, Questions
+from src.schemas.quiz import QuestionBase
 
 create_all_tables()
 

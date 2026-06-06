@@ -1,5 +1,6 @@
-from database.session import Base
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+
+from src.database.session import Base
 
 
 class Questions(Base):
