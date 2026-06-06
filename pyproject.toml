@@ -9,3 +9,40 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "sqlalchemy==2.0.15",
 ]
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.16.3",
+    "pre-commit==4.2.0",
+    "pyright>=1.1.410",
+    "pytest==8.3.5",
+    "pytest-cov==6.1.1",
+    "ruff==0.11.5",
+]
+
+[tool.pyright]
+exclude = [".venv", "**/node_modules", "**/__pycache__", "**/.*"]
+pythonVersion = "3.11"
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+target-version = "py311"
+src = ["src", "tests"]
+exclude = ["build", "dist", "**/__pycache__", "**/.*"]
+lint.select = [
+    "E",   # pycodestyle Errors
+    "W",   # pycodestyle Warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "RUF", # Ruff-specific rules
+]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "commitizen"
+version_scheme = "pep440"
+tag_format = "$version"
+update_changelog_on_bump = true

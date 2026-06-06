@@ -10,5 +10,9 @@ wheels/
 .venv
 .env
 
+# Visual Studio Code
+.vscode/
+tempCodeRunnerFile.py
+
 # Deployment
 Test-Deploy/

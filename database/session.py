@@ -1,10 +1,9 @@
 from typing import Annotated
-from fastapi import Depends
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.orm import DeclarativeBase
 
 from core.config import settings
+from fastapi import Depends
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 engine = create_engine(settings.DATABASE_URL)
 
