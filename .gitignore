@@ -14,5 +14,8 @@ wheels/
 .vscode/
 tempCodeRunnerFile.py
 
+# Pytest
+pytest.ini
+
 # Deployment
 Test-Deploy/
