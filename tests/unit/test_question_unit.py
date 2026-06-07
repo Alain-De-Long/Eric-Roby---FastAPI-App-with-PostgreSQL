@@ -1,15 +1,6 @@
 from unittest.mock import MagicMock
 
-import pytest
-from src.core.config import settings
 from src.models.quiz import Questions
-
-from tests.helpers.quiz_api import QuizApiClient
-
-
-@pytest.fixture
-def quiz_api_client(client):
-    return QuizApiClient(client, base_url=settings.API_PREFIX)
 
 
 def test_read_question_success(quiz_api_client, mock_db):
@@ -25,14 +16,18 @@ def test_read_question_success(quiz_api_client, mock_db):
     assert data["id"] == 1
     assert data["question_text"] == "What is the best Python Framework?"
 
+    mock_db.query.assert_called_once_with(Questions)
+
 
 def test_read_question_not_found(quiz_api_client, mock_db):
     mock_db.query.return_value.filter.return_value.first = MagicMock(return_value=None)
 
-    response = quiz_api_client.read_question(question_id=1)
+    response = quiz_api_client.read_question(question_id=999)
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Question is not found"
+
+    mock_db.query.assert_called_once_with(Questions)
 
 
 def test_create_question_success(quiz_api_client, mock_db):

@@ -23,7 +23,7 @@ def client(mock_db):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def quiz_api(client: TestClient):
     base_url = f"{settings.ENDPOINT}{settings.API_PREFIX}"
 
