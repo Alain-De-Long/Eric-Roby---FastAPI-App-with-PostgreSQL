@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    ENDPOINT: str = "http://localhost:8000"
     API_PREFIX: str = "/api"
 
     POSTGRES_SERVER: str = "localhost"
