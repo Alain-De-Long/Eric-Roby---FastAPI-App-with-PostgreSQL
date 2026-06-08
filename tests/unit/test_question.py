@@ -45,7 +45,7 @@ def test_create_question_success(quiz_api_client, mock_db):
     mock_db.refresh.side_effect = mock_refresh_side_effect
 
     response = quiz_api_client.create_question(payload)
-    assert response.status_code == 200
+    assert response.status_code == 201
 
     data = response.json()
     assert data["id"] == 1

@@ -15,7 +15,7 @@ def read_question(question_id: int, db: db_dependency):
     return result
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_questions(question: QuestionBase, db: db_dependency):
     db_question = Questions(question_text=question.question_text)
     db.add(db_question)
