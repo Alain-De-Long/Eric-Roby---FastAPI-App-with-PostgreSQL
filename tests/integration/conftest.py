@@ -1,9 +1,17 @@
 import pytest
 from fastapi.testclient import TestClient
 from src.core.config import settings
+from src.database.session import create_all_tables
 from src.main import app
 
 from tests.helpers.quiz_api import QuizApiClient
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_integration_database():
+    create_all_tables()
+
+    yield
 
 
 @pytest.fixture(scope="session")
