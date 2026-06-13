@@ -45,4 +45,4 @@ jobs:
         env:
           ENDPOINT: http://localhost:8000
           API_PREFIX: /api
-        run: pytest tests/unit/ -v
+        run: uv run pytest tests/unit/ -v
