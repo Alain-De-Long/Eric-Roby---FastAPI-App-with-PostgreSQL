@@ -1,0 +1,69 @@
+name: FastAPI PostgreSQL Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  run-integration-tests:
+    name: Execute FastAPI Integration Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    services:
+      db:
+        image: postgres:14
+        env:
+          POSTGRES_DB: QuizApplicationYT
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v6
+
+      - name: Setup Python Environment
+        uses: actions/setup-python@v6
+
+      - name: Setup UV Package Manager
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.14"
+          python-version: ${{matrix.python-version}}
+          enable-cache: true
+
+      - name: Install Dependencies with UV
+        env:
+          UV_SYSTEM_PYTHON: 1
+        run: |
+          uv pip install --no-cache -r pyproject.toml
+
+      - name: Run Pytest for Integration Test Folder Only
+        env:
+          ENDPOINT: http://localhost:8000
+          API_PREFIX: /api
+
+          POSTGRES_SERVER: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: QuizApplicationYT
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        run: |
+          uv run pytest tests/integration/ -v
