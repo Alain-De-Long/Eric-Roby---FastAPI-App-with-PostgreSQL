@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - "**"
-  pull_request:
-    branches:
-      - main
-      - dev
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - dev
 
 jobs:
   run-unit-tests:
