@@ -1,4 +1,4 @@
-from src.models.quiz import Questions
+from src.models.quiz import Choices, Questions
 
 
 def test_read_question_success(quiz_api_client, mock_db):
@@ -97,3 +97,35 @@ def test_update_question_not_found(quiz_api_client, mock_db):
 
     mock_db.commit.assert_not_called()
     mock_db.refresh.assert_not_called()
+
+
+def test_delete_question_success(quiz_api_client, mock_db):
+    mock_question = Questions(id=1, question_text="1 + 1 = ?")
+    mock_db.query.return_value.filter().first.return_value = mock_question
+
+    response = quiz_api_client.delete_question(question_id=1)
+    assert response.status_code == 200
+    assert (
+        response.json()["detail"]
+        == "Question 1 and its choices have been successfully deleted"
+    )
+
+    mock_db.query.assert_any_call(Questions)
+    mock_db.query.assert_any_call(Choices)
+
+    mock_db.delete.assert_called_once_with(mock_question)
+    mock_db.commit.assert_called_once()
+
+
+def test_delete_question_not_found(quiz_api_client, mock_db):
+    mock_db.query.return_value.filter().first.return_value = None
+
+    response = quiz_api_client.delete_question(question_id=999)
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Question is not found"
+
+    mock_db.query.assert_called_once_with(Questions)
+
+    mock_db.delete.assert_not_called()
+    mock_db.commit.assert_not_called()
