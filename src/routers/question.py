@@ -33,3 +33,37 @@ def create_questions(question: QuestionBase, db: db_dependency):
     db.refresh(db_question)
 
     return db_question
+
+
+@router.put("/{question_id}", status_code=200)
+def update_question(question_id: int, updated_data: QuestionBase, db: db_dependency):
+    db_quesion = db.query(Questions).filter(Questions.id == question_id).first()
+    if not db_quesion:
+        raise HTTPException(status_code=404, detail="Question is not found")
+
+    db_quesion.question_text = updated_data.question_text
+
+    db.commit()
+    db.refresh(db_quesion)
+    return db_quesion
+
+
+@router.delete("/{question_id}", status_code=200)
+def delete_question(question_id: int, db: db_dependency):
+    db_question = db.query(Questions).filter(Questions.id == question_id).first()
+    if not db_question:
+        raise HTTPException(status_code=404, detail="Question is not found")
+
+    db.query(Choices).filter(Choices.question_id == question_id).delete(
+        synchronize_session=False
+    )
+
+    db.delete(db_question)
+
+    db.commit()
+
+    return {
+        "detail": (
+            f"Question {question_id} and its choices have been successfully deleted"
+        )
+    }

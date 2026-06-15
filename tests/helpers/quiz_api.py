@@ -12,8 +12,17 @@ class QuizApiClient:
     def read_question(self, question_id: int):
         return self.client.get(f"{self.base_url}/questions/{question_id}")
 
-    def read_choices(self, question_id):
+    def read_choices(self, question_id: int):
         return self.client.get(f"{self.base_url}/choices/{question_id}")
+
+    def update_question(self, question_id: int, question_text):
+        return self.client.put(
+            f"{self.base_url}/questions/{question_id}",
+            json={"question_text": question_text, "choices": []},
+        )
+
+    def delete_question(self, question_id: int):
+        return self.client.delete(f"{self.base_url}/questions/{question_id}")
 
     @staticmethod
     def create_question_payload(**kwargs):
