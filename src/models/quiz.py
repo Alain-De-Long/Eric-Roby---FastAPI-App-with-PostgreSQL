@@ -14,7 +14,7 @@ class Questions(Base):
     question_text: Mapped[str] = mapped_column(String, index=True)
 
     choices: Mapped[list["Choices"]] = relationship(
-        back_populates="questions", cascade="all, delete-orphan", lazy="selectin"
+        back_populates="question", cascade="all, delete-orphan", lazy="selectin"
     )
 
 
