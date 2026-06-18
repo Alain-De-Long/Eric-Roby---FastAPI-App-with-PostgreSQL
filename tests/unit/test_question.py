@@ -38,11 +38,24 @@ def test_create_question_success(quiz_api_client, mock_db):
         ],
     )
 
-    mock_question = Questions(id=1, question_text=payload["question_text"])
+    # mock_question = Questions(id=1, question_text=payload["question_text"])
+
+    mock_choices = [
+        Choices(choice_text=choice["choice_text"], is_correct=choice["is_correct"])
+        for choice in payload["choices"]
+    ]
 
     def mock_refresh_side_effect(obj):
-        obj.id = mock_question.id
-        obj.question_text = mock_question.question_text
+        # obj.id = mock_question.id
+        # obj.question_text = mock_question.question_text
+        obj.id = 1
+        obj.question_text = "What is the best Python Framework?"
+        obj.choices = mock_choices
+
+        for idx, choice in enumerate(obj.choices):
+            choice.id = idx + 1
+            choice.question_id = obj.id
+
         return None
 
     mock_db.refresh.side_effect = mock_refresh_side_effect
@@ -53,6 +66,19 @@ def test_create_question_success(quiz_api_client, mock_db):
     data = response.json()
     assert data["id"] == 1
     assert data["question_text"] == "What is the best Python Framework?"
+
+    assert "choices" in data
+    assert len(data["choices"]) == 2
+
+    assert data["choices"][0]["id"] == 1
+    assert data["choices"][0]["choice_text"] == "FastAPI"
+    assert data["choices"][0]["is_correct"] is True
+    assert data["choices"][0]["question_id"] == 1
+
+    assert data["choices"][1]["id"] == 2
+    assert data["choices"][1]["choice_text"] == "Anything else"
+    assert data["choices"][1]["is_correct"] is False
+    assert data["choices"][0]["question_id"] == 1
 
     # expected_calls=[
     #     call(ANY),

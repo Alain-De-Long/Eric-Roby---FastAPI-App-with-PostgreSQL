@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.database.session import db_dependency
 from src.models.quiz import Choices, Questions
-from src.schemas.quiz import QuestionBase
+from src.schemas.quiz import QuestionRequest, QuestionResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
@@ -15,8 +15,8 @@ def read_question(question_id: int, db: db_dependency):
     return result
 
 
-@router.post("/", status_code=201)
-def create_questions(question: QuestionBase, db: db_dependency):
+@router.post("/", status_code=201, response_model=QuestionResponse)
+def create_questions(question: QuestionRequest, db: db_dependency):
     db_question = Questions(question_text=question.question_text)
     db.add(db_question)
     db.flush()
@@ -36,7 +36,7 @@ def create_questions(question: QuestionBase, db: db_dependency):
 
 
 @router.put("/{question_id}", status_code=200)
-def update_question(question_id: int, updated_data: QuestionBase, db: db_dependency):
+def update_question(question_id: int, updated_data: QuestionRequest, db: db_dependency):
     db_quesion = db.query(Questions).filter(Questions.id == question_id).first()
     if not db_quesion:
         raise HTTPException(status_code=404, detail="Question is not found")
