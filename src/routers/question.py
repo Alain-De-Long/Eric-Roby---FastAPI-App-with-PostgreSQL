@@ -1,12 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from src.database.session import db_dependency
 from src.models.quiz import Choices, Questions
-from src.schemas.quiz import QuestionRequest, QuestionResponse
+from src.schemas.quiz import DeleteResponse, QuestionRequest, QuestionResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
 
-@router.get("/{question_id}")
+@router.get("/", response_model=list[QuestionResponse])
+def read_all_question(db: db_dependency):
+    return db.query(Questions).all()
+
+
+@router.get("/{question_id}", response_model=QuestionResponse)
 def read_question(question_id: int, db: db_dependency):
     result = db.query(Questions).filter(Questions.id == question_id).first()
     if not result:
@@ -35,7 +40,7 @@ def create_questions(question: QuestionRequest, db: db_dependency):
     return db_question
 
 
-@router.put("/{question_id}", status_code=200)
+@router.put("/{question_id}", status_code=200, response_model=QuestionResponse)
 def update_question(question_id: int, updated_data: QuestionRequest, db: db_dependency):
     db_quesion = db.query(Questions).filter(Questions.id == question_id).first()
     if not db_quesion:
@@ -48,7 +53,7 @@ def update_question(question_id: int, updated_data: QuestionRequest, db: db_depe
     return db_quesion
 
 
-@router.delete("/{question_id}", status_code=200)
+@router.delete("/{question_id}", status_code=200, response_model=DeleteResponse)
 def delete_question(question_id: int, db: db_dependency):
     db_question = db.query(Questions).filter(Questions.id == question_id).first()
     if not db_question:

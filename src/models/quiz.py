@@ -7,9 +7,6 @@ from src.database.session import Base
 class Questions(Base):
     __tablename__ = "questions"
 
-    # id = Column(Integer, primary_key=True, index=True)
-    # question_text = Column(String, index=True)
-
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
     question_text: Mapped[str] = mapped_column(String, index=True)
 
