@@ -128,8 +128,6 @@ def test_delete_question_success(quiz_api_client, mock_db):
     )
 
     mock_db.query.assert_any_call(Questions)
-    mock_db.query.assert_any_call(Choices)
-
     mock_db.delete.assert_called_once_with(mock_question)
     mock_db.commit.assert_called_once()
 

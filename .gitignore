@@ -16,6 +16,7 @@ tempCodeRunnerFile.py
 
 # Pytest
 pytest.ini
+.coverage
 
 # Deployment
 Test-Deploy/
