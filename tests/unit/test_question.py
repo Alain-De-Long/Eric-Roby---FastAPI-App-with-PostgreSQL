@@ -3,9 +3,6 @@ from src.models.quiz import Choices, Questions
 
 def test_read_question_success(quiz_api_client, mock_db):
     mock_question = Questions(id=1, question_text="What is the best Python Framework?")
-    # mock_db.query.return_value.filter.return_value.first = MagicMock(
-    #     return_value=mock_question
-    # )
     mock_db.query.return_value.filter().first.return_value = mock_question
 
     response = quiz_api_client.read_question(question_id=1)
