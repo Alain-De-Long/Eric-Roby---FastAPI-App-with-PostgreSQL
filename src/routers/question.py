@@ -65,10 +65,6 @@ def delete_question(question_id: int, db: db_dependency):
     if not db_question:
         raise HTTPException(status_code=404, detail="Question is not found")
 
-    db.query(Choices).filter(Choices.question_id == question_id).delete(
-        synchronize_session=False
-    )
-
     db.delete(db_question)
     db.commit()
 
