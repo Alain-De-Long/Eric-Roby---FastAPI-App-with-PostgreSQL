@@ -51,7 +51,7 @@ def test_read_question_and_choices_when_id_not_found_returns_404(integration_qui
     assert read_choices_repsonse.json()["detail"] == "Choices is not found"
 
 
-def test_update_and_delete_choice_standalone_integration(integration_quiz_api):
+def test_update_and_delete_choice_standalone(integration_quiz_api):
     payload = integration_quiz_api.create_question_payload(
         question_text="What is the capital of Vietnam?",
         choices=[
