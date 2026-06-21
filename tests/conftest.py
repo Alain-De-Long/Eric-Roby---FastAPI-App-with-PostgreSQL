@@ -1,7 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import text
 from src.core.config import settings
 from src.database.session import (
+    Base,
     create_all_tables,
     get_db,
     get_engine,
@@ -51,3 +53,32 @@ def live_client(db_session):
 def quiz_api_client(live_client):
     base_url = f"{settings.ENDPOINT}{settings.API_PREFIX}"
     return QuizApiClient(client=live_client, base_url=base_url)
+
+
+@pytest.fixture(scope="function")
+def lifespan_test_env(mocker):
+    from src.database import session
+
+    mocker.patch.object(session, "_engine", None)
+    mocker.patch.object(session, "_SessionLocal", None)
+
+    engine = session.get_engine()
+
+    SCHEMA_NAME = "test_lifespan"
+
+    with engine.connect() as conn:
+        conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA_NAME};"))
+        conn.commit()
+
+    isolated_engine = engine.execution_options(schema_translate_map={None: SCHEMA_NAME})
+    Base.metadata.schema = SCHEMA_NAME
+
+    mocker.patch("src.database.session.get_engine", return_value=isolated_engine)
+    yield isolated_engine
+
+    with engine.connect() as conn:
+        conn.execute(text(f"DROP SCHEMA IF EXISTS {SCHEMA_NAME} CASCADE;"))
+        conn.commit()
+
+    Base.metadata.schema = None
+    engine.dispose()

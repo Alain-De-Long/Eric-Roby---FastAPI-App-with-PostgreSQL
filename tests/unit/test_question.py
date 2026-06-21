@@ -1,6 +1,28 @@
 from src.models.quiz import Choices, Questions
 
 
+def test_read_all_questions_success(quiz_api_client, mock_db):
+    mock_questions = [
+        Questions(id=1, question_text="What is AI?"),
+        Questions(id=2, question_text="What is LLM?"),
+    ]
+    mock_db.query.return_value.all.return_value = mock_questions
+
+    response = quiz_api_client.read_all_questions()
+    assert response.status_code == 200
+
+    questions_data = response.json()
+    assert len(questions_data) == 2
+
+    assert questions_data[0]["id"] == 1
+    assert questions_data[0]["question_text"] == "What is AI?"
+    assert questions_data[0]["choices"] == []
+
+    assert questions_data[1]["id"] == 2
+    assert questions_data[1]["question_text"] == "What is LLM?"
+    assert questions_data[1]["choices"] == []
+
+
 def test_read_question_success(quiz_api_client, mock_db):
     mock_question = Questions(id=1, question_text="What is the best Python Framework?")
     mock_db.query.return_value.filter().first.return_value = mock_question

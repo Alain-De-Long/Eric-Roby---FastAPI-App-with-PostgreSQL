@@ -10,6 +10,13 @@ def test_quiz_management_flow(quiz_api_client):
     create_question_response = quiz_api_client.create_question(payload=payload)
     assert create_question_response.status_code == 201
 
+    all_questions_response = quiz_api_client.read_all_questions()
+    assert all_questions_response.status_code == 200
+    assert any(
+        question["question_text"] == "What is the default port of FastAPI?"
+        for question in all_questions_response.json()
+    )
+
     question_data = create_question_response.json()
     question_id = question_data["id"]
     target_choice_id = question_data["choices"][0]["id"]

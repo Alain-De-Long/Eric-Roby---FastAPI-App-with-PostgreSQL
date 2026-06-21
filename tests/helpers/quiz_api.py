@@ -7,6 +7,9 @@ class QuizApiClient:
         self.base_url = base_url
 
     # QUESTIONS
+    def read_all_questions(self):
+        return self.client.get(f"{self.base_url}/questions/")
+
     def create_question(self, payload: dict):
         return self.client.post(f"{self.base_url}/questions/", json=payload)
 
