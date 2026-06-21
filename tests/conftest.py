@@ -12,7 +12,7 @@ from src.main import app
 from tests.helpers.quiz_api import QuizApiClient
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def setup_live_database():
     create_all_tables()
 
@@ -20,7 +20,7 @@ def setup_live_database():
 
 
 @pytest.fixture(scope="function")
-def db_session():
+def db_session(setup_live_database):
     connection = get_engine().connect()
     transaction = connection.begin()
 
