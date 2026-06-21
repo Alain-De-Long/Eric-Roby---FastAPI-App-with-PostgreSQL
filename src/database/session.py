@@ -6,29 +6,46 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from src.core.config import settings
 
-engine = create_engine(settings.DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+_engine = None
+_SessionLocal = None
 
 
 class Base(DeclarativeBase):
     pass
 
 
+def get_engine():
+    """Get the SQLAlchemy database engine using lazy initialization"""
+    global _engine
+    if _engine is None:
+        _engine = create_engine(settings.DATABASE_URL)
+
+    return _engine
+
+
+def get_session_local():
+    """Get the SQLAlchemy session factory using lazy initialization"""
+    global _SessionLocal
+    if _SessionLocal is None:
+        _SessionLocal = sessionmaker(
+            autocommit=False, autoflush=False, bind=get_engine()
+        )
+
+    return _SessionLocal
+
+
 def get_db():
-    db = SessionLocal()
+    Session = get_session_local()
+    db = Session()
 
     try:
         yield db
-    except Exception as e:
-        print(f"Database error encountered: {e}")
-        raise (e)
     finally:
         db.close()
 
 
 def create_all_tables():
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=get_engine())
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
