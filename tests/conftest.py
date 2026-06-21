@@ -1,7 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
 from src.core.config import settings
-from src.database.session import SessionLocal, create_all_tables, engine, get_db
+from src.database.session import (
+    create_all_tables,
+    get_db,
+    get_engine,
+    get_session_local,
+)
 from src.main import app
 
 from tests.helpers.quiz_api import QuizApiClient
@@ -16,10 +21,11 @@ def setup_live_database():
 
 @pytest.fixture(scope="function")
 def db_session():
-    connection = engine.connect()
+    connection = get_engine().connect()
     transaction = connection.begin()
 
-    session = SessionLocal(bind=connection)
+    SessionLocalFactory = get_session_local()
+    session = SessionLocalFactory(bind=connection)
 
     yield session
 
