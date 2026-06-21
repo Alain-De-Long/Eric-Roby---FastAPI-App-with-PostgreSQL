@@ -65,5 +65,16 @@ jobs:
           POSTGRES_DB: QuizApplicationYT
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-        run: |
-          uv run pytest tests/integration/ -v
+        run: uv run pytest tests/integration/ -v
+
+      - name: Run Pytest for E2E Test Folder Only
+        env:
+          ENDPOINT: http://localhost:8000
+          API_PREFIX: /api
+
+          POSTGRES_SERVER: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: QuizApplicationYT
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        run: uv run pytest tests/e2e/ -v
