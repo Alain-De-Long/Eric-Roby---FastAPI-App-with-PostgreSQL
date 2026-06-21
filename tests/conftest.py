@@ -1,20 +1,47 @@
-from unittest.mock import MagicMock
-
 import pytest
 from fastapi.testclient import TestClient
-from src.database.session import get_db
+from src.core.config import settings
+from src.database.session import SessionLocal, create_all_tables, engine, get_db
 from src.main import app
 
-
-@pytest.fixture
-def mock_db():
-    return MagicMock()
+from tests.helpers.quiz_api import QuizApiClient
 
 
-@pytest.fixture
-def client(mock_db):
-    app.dependency_overrides[get_db] = lambda: mock_db
+@pytest.fixture(scope="session", autouse=True)
+def setup_live_database():
+    create_all_tables()
 
-    yield TestClient(app)
+    yield
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    connection = engine.connect()
+    transaction = connection.begin()
+
+    session = SessionLocal(bind=connection)
+
+    yield session
+
+    session.close()
+    transaction.rollback()
+    connection.close()
+
+
+@pytest.fixture(scope="function")
+def live_client(db_session):
+    def _override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = _override_get_db
+
+    client = TestClient(app)
+    yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(scope="function")
+def quiz_api_client(live_client):
+    base_url = f"{settings.ENDPOINT}{settings.API_PREFIX}"
+    return QuizApiClient(client=live_client, base_url=base_url)
